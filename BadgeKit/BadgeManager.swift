@@ -8,7 +8,7 @@
 
 import UIKit
 
-@objc public protocol WYBadgeProtocol_objc: class { // 外界objc需要使用的属性或方法 这里必须这样转发一下，不然没法搞
+@objc public protocol BadgeProtocol_objc: class { // 外界objc需要使用的属性或方法 这里必须这样转发一下，不然没法搞
     var objcBadgeOffset: CGPoint { get set }
     func objc_showBadge()
     func objc_hideBadge()
@@ -117,7 +117,7 @@ class BadgeManager: NSObject {
         }
     }
     
-    public func observeFor(keyPath: NSString, badgeView: WYBadgeProtocol_objc?, block: BadgeNotificationBlock?) {
+    public func observeFor(keyPath: NSString, badgeView: BadgeProtocol_objc?, block: BadgeNotificationBlock?) {
         if UserDefaults.standard.bool(forKey: badgeKeyFor(keyPath: keyPath)) { // 如果记录了就不在处理
             return
         }
