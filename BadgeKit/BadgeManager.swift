@@ -9,10 +9,12 @@
 import UIKit
 
 @objc public protocol BadgeProtocol_objc: class { // 外界objc需要使用的属性或方法 这里必须这样转发一下，不然没法搞
-    var objcBadgeOffset: CGPoint { get set }
+    var objc_badgeTargetView: UIView? { get }
+    var objc_badgeView: UIButton? { get set }
+    var objc_badgeOffset: CGPoint { get set }
     func objc_showBadge()
+    func objc_showBadge(_ withValue: UInt)
     func objc_hideBadge()
-    func objc_badgeView() -> UIButton?
 }
 
 public protocol BadgeProtocol: class {

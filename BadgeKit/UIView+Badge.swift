@@ -107,47 +107,13 @@ extension BadgeProtocol {
     }
 }
 
-extension UIView: BadgeProtocol, BadgeProtocol_objc {
-    public func objc_badgeView() -> UIButton? {
-        return badgeView
-    }
-    
-    public var objcBadgeOffset: CGPoint {
-        get { return badgeOffset }
-        set { badgeOffset = newValue }
-    }
-    
-    public func objc_showBadge() {
-        showBadge()
-    }
-    
-    public func objc_hideBadge() {
-        hideBadge()
-    }
-    
+extension UIView: BadgeProtocol {
     public var badgeTargetView: UIView? {
         return self
     }
 }
 
-extension UIBarButtonItem: BadgeProtocol, BadgeProtocol_objc {
-    public func objc_badgeView() -> UIButton? {
-        return badgeView
-    }
-    
-    public var objcBadgeOffset: CGPoint {
-        get { return badgeOffset }
-        set { badgeOffset = newValue }
-    }
-    
-    public func objc_showBadge() {
-        showBadge()
-    }
-    
-    public func objc_hideBadge() {
-        hideBadge()
-    }
-    
+extension UIBarButtonItem: BadgeProtocol {
     public var badgeTargetView: UIView? {
         let view = value(forKeyPath: "_view") as? UIView
         if view?.isMember(of: UIButton.self) == true {
@@ -169,12 +135,28 @@ extension UIBarButtonItem: BadgeProtocol, BadgeProtocol_objc {
     }
 }
 
-extension UITabBarItem: BadgeProtocol, BadgeProtocol_objc {
-    public func objc_badgeView() -> UIButton? {
-        return badgeView
+extension UITabBarItem: BadgeProtocol {
+    public var badgeTargetView: UIView? {
+        if let view = self.value(forKeyPath: "_view") as? UIView {
+            let objView = view.findSubview("UITabBarSwappableImageView")
+            return objView
+        }
+        return nil
+    }
+}
+
+// MARK: - 下面是objc兼容代码，如果不支持objc可以不要
+extension UIBarButtonItem: BadgeProtocol_objc {
+    public var objc_badgeTargetView: UIView? {
+        return badgeTargetView
     }
     
-    public var objcBadgeOffset: CGPoint {
+    public var objc_badgeView: UIButton? {
+        get { return badgeView }
+        set { badgeView = newValue }
+    }
+    
+    public var objc_badgeOffset: CGPoint {
         get { return badgeOffset }
         set { badgeOffset = newValue }
     }
@@ -183,15 +165,67 @@ extension UITabBarItem: BadgeProtocol, BadgeProtocol_objc {
         showBadge()
     }
     
+    public func objc_showBadge(_ withValue: UInt) {
+        showBadge()
+    }
+    
     public func objc_hideBadge() {
         hideBadge()
     }
+}
+
+extension UITabBarItem: BadgeProtocol_objc {
+    public var objc_badgeTargetView: UIView? {
+        return badgeTargetView
+    }
     
-    public var badgeTargetView: UIView? {
-        if let view = self.value(forKeyPath: "_view") as? UIView {
-            let objView = view.findSubview("UITabBarSwappableImageView")
-            return objView
-        }
-        return nil
+    public var objc_badgeView: UIButton? {
+        get { return badgeView }
+        set { badgeView = newValue }
+    }
+    
+    public var objc_badgeOffset: CGPoint {
+        get { return badgeOffset }
+        set { badgeOffset = newValue }
+    }
+    
+    public func objc_showBadge() {
+        showBadge()
+    }
+    
+    public func objc_showBadge(_ withValue: UInt) {
+        showBadge()
+    }
+    
+    public func objc_hideBadge() {
+        hideBadge()
+    }
+}
+
+extension UIView: BadgeProtocol_objc {
+    public var objc_badgeTargetView: UIView? {
+        return badgeTargetView
+    }
+    
+    public var objc_badgeView: UIButton? {
+        get { return badgeView }
+        set { badgeView = newValue }
+    }
+    
+    public var objc_badgeOffset: CGPoint {
+        get { return badgeOffset }
+        set { badgeOffset = newValue }
+    }
+    
+    public func objc_showBadge() {
+        showBadge()
+    }
+    
+    public func objc_showBadge(_ withValue: UInt) {
+        showBadge()
+    }
+    
+    public func objc_hideBadge() {
+        hideBadge()
     }
 }
