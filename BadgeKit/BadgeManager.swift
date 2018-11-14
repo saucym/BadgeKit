@@ -26,7 +26,7 @@ public protocol BadgeProtocol: class {
     func hideBadge()
 }
 
-@objc public class Badge: NSObject {
+@objc public class BadgeModel: NSObject {
     public let keyPath: NSString
     public let count: UInt
     public init(keyPath: NSString, count: UInt) {
@@ -39,13 +39,13 @@ public protocol BadgeProtocol: class {
     }
 }
 
-public typealias BadgeNotificationBlock = (Badge, Bool) -> Void
+public typealias BadgeNotificationBlock = (BadgeModel, Bool) -> Void
 
 @objc public class BadgeManager: NSObject {
     @objc public static let shared = BadgeManager()
     @objc public static var radius: CGFloat = 4.5
     @objc public static var maxShowNumber: NSInteger = 99
-    private var badgeDict = [NSString: Badge]() // keyPath : Badge
+    private var badgeDict = [NSString: BadgeModel]() // keyPath : Badge
     private let blockDict = NSMutableDictionary() // keyPath : [BadgeProtocol or BadgeNotificationBlock]
     private var hideDict: [NSString: NSMutableSet] // keyPath : [keyPath]
     @objc public var storageURL: URL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0].appendingPathComponent("badgeKit.data") {
@@ -76,13 +76,13 @@ public typealias BadgeNotificationBlock = (Badge, Bool) -> Void
     
     @objc public func setBadgeFor(keyPath: NSString) {
         DispatchQueue.main.async {
-            self.add(badge: Badge(keyPath: keyPath, count: 0))
+            self.add(badge: BadgeModel(keyPath: keyPath, count: 0))
         }
     }
     
     @objc public func setBadgeFor(keyPath: NSString, count: UInt) {
         DispatchQueue.main.async {
-            self.add(badge: Badge(keyPath: keyPath, count: count))
+            self.add(badge: BadgeModel(keyPath: keyPath, count: count))
         }
     }
     
@@ -289,7 +289,7 @@ public typealias BadgeNotificationBlock = (Badge, Bool) -> Void
         return "wy_badge_" + (keyPath as String) + "\(storageURL.path.hashValue)"
     }
     
-    func add(badge: Badge) {
+    func add(badge: BadgeModel) {
         if UserDefaults.standard.bool(forKey: badgeKeyFor(keyPath: badge.keyPath)) { // 如果记录了就不在处理
             return
         }
@@ -305,7 +305,7 @@ public typealias BadgeNotificationBlock = (Badge, Bool) -> Void
         }
     }
     
-    func recursiveNotificationFor(badge: Badge, isAdd: Bool) {
+    func recursiveNotificationFor(badge: BadgeModel, isAdd: Bool) {
         if let array = blockDict.object(forKey: badge.keyPath) as? [Any] {
             for obj in array {
                 if let block = obj as? BadgeNotificationBlock {
@@ -357,7 +357,7 @@ public typealias BadgeNotificationBlock = (Badge, Bool) -> Void
                         bView.hideBadge()
                     }
                 } else if let block = obj as? BadgeNotificationBlock {
-                    block(Badge(keyPath: keyPath, count: 0), false)
+                    block(BadgeModel(keyPath: keyPath, count: 0), false)
                 }
             }
         }

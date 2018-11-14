@@ -20,7 +20,7 @@ extension UIView {
     
     func findSubview(_ name: String) -> UIView? {
         if let nameClass = NSClassFromString(name) {
-            if type(of: self).isMember(of: nameClass) {
+            if type(of: self) == nameClass {
                 return self
             } else {
                 return self.subviews.lazy.filter{ $0.findSubview(name) != nil }.first
@@ -54,11 +54,11 @@ extension BadgeProtocol {
                 bView.translatesAutoresizingMaskIntoConstraints = false
                 bView.heightAnchor.constraint(equalToConstant: BadgeManager.radius * 2).isActive = true
                 let topConstraint = bView.topAnchor.constraint(equalTo: view.topAnchor, constant: self.badgeOffset.y - BadgeManager.radius)
-                topConstraint.isActive = true
                 topConstraint.priority = .defaultLow
+                topConstraint.isActive = true
                 let leftConstraint = bView.leftAnchor.constraint(equalTo: view.rightAnchor, constant: self.badgeOffset.x - BadgeManager.radius)
-                leftConstraint.isActive = true
                 leftConstraint.priority = .defaultLow
+                leftConstraint.isActive = true
                 return bView
             } else {
                 return nil
