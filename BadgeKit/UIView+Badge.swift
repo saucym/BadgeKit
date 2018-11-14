@@ -8,9 +8,6 @@
 
 import UIKit
 
-private let kRJBadgeDefaultRadius: CGFloat = 4.5
-private let kRJBadgeDefaultMaximumBadgeNumber: NSInteger = 99
-
 private struct AssociatedKeys {
     static var view = "badgeView"
     static var offset = "badgeOffset"
@@ -46,20 +43,20 @@ extension BadgeProtocol {
                 bView.titleLabel?.font = UIFont.boldSystemFont(ofSize: 9)
                 bView.backgroundColor = UIColor(red: 1, green: 0x4c / 255.0, blue: 0x22 / 255.0, alpha: 1)
                 bView.setTitleColor(UIColor.white, for: .normal)
-                bView.layer.cornerRadius = kRJBadgeDefaultRadius
+                bView.layer.cornerRadius = BadgeManager.radius
                 bView.layer.masksToBounds = true
                 bView.isHidden = true
-                bView.contentEdgeInsets = UIEdgeInsets(top: 0, left: kRJBadgeDefaultRadius, bottom: 0, right: kRJBadgeDefaultRadius)
+                bView.contentEdgeInsets = UIEdgeInsets(top: 0, left: BadgeManager.radius, bottom: 0, right: BadgeManager.radius)
                 view.addSubview(bView)
-                view.bringSubview(toFront: bView)
+                view.bringSubviewToFront(bView)
                 objc_setAssociatedObject(self, &AssociatedKeys.view, bView, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
                 
                 bView.translatesAutoresizingMaskIntoConstraints = false
-                bView.heightAnchor.constraint(equalToConstant: kRJBadgeDefaultRadius * 2).isActive = true
-                let topConstraint = bView.topAnchor.constraint(equalTo: view.topAnchor, constant: self.badgeOffset.y - kRJBadgeDefaultRadius)
+                bView.heightAnchor.constraint(equalToConstant: BadgeManager.radius * 2).isActive = true
+                let topConstraint = bView.topAnchor.constraint(equalTo: view.topAnchor, constant: self.badgeOffset.y - BadgeManager.radius)
                 topConstraint.isActive = true
                 topConstraint.priority = .defaultLow
-                let leftConstraint = bView.leftAnchor.constraint(equalTo: view.rightAnchor, constant: self.badgeOffset.x - kRJBadgeDefaultRadius)
+                let leftConstraint = bView.leftAnchor.constraint(equalTo: view.rightAnchor, constant: self.badgeOffset.x - BadgeManager.radius)
                 leftConstraint.isActive = true
                 leftConstraint.priority = .defaultLow
                 return bView
@@ -76,7 +73,7 @@ extension BadgeProtocol {
                 return number.cgPointValue
             } else {
                 if (self as? UITabBarItem) != nil {
-                    return CGPoint(x: -kRJBadgeDefaultRadius, y: kRJBadgeDefaultRadius)
+                    return CGPoint(x: -BadgeManager.radius, y: BadgeManager.radius)
                 } else {
                     return CGPoint.zero
                 }
@@ -87,17 +84,17 @@ extension BadgeProtocol {
     
     public func showBadge(_ withValue: UInt) {
         badgeView?.isHidden = withValue == 0 ? true : false
-        let text: String = withValue > kRJBadgeDefaultMaximumBadgeNumber ? "\(kRJBadgeDefaultMaximumBadgeNumber)+" : "\(withValue)"
+        let text: String = withValue > BadgeManager.maxShowNumber ? "\(BadgeManager.maxShowNumber)+" : "\(withValue)"
         badgeView?.setTitle(text, for: .normal)
-        badgeView?.heightConstraint?.constant = kRJBadgeDefaultRadius * 2 + 4
-        badgeView?.layer.cornerRadius = kRJBadgeDefaultRadius + 2
+        badgeView?.heightConstraint?.constant = BadgeManager.radius * 2 + 4
+        badgeView?.layer.cornerRadius = BadgeManager.radius + 2
     }
     
     public func showBadge() {
         badgeView?.setTitle("", for: .normal)
         badgeView?.isHidden = false
-        badgeView?.heightConstraint?.constant = kRJBadgeDefaultRadius * 2
-        badgeView?.layer.cornerRadius = kRJBadgeDefaultRadius
+        badgeView?.heightConstraint?.constant = BadgeManager.radius * 2
+        badgeView?.layer.cornerRadius = BadgeManager.radius
     }
     
     public func hideBadge() {
@@ -166,7 +163,7 @@ extension UIBarButtonItem: BadgeProtocol_objc {
     }
     
     public func objc_showBadge(_ withValue: UInt) {
-        showBadge()
+        showBadge(withValue)
     }
     
     public func objc_hideBadge() {
@@ -194,7 +191,7 @@ extension UITabBarItem: BadgeProtocol_objc {
     }
     
     public func objc_showBadge(_ withValue: UInt) {
-        showBadge()
+        showBadge(withValue)
     }
     
     public func objc_hideBadge() {
@@ -222,7 +219,7 @@ extension UIView: BadgeProtocol_objc {
     }
     
     public func objc_showBadge(_ withValue: UInt) {
-        showBadge()
+        showBadge(withValue)
     }
     
     public func objc_hideBadge() {

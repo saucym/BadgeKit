@@ -10,7 +10,6 @@
 		930BC5D6212DAEEE00618B59 /* BadgeKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 930BC5CC212DAEEE00618B59 /* BadgeKit.framework */; };
 		930BC5DB212DAEEE00618B59 /* BadgeKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 930BC5DA212DAEEE00618B59 /* BadgeKitTests.swift */; };
 		930BC5DD212DAEEE00618B59 /* BadgeKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 930BC5CF212DAEEE00618B59 /* BadgeKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		930BC5E7212DAF3B00618B59 /* Badge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 930BC5E6212DAF3B00618B59 /* Badge.swift */; };
 		930BC5E9212DAF4F00618B59 /* BadgeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 930BC5E8212DAF4F00618B59 /* BadgeManager.swift */; };
 		930BC5ED212DAFA600618B59 /* UIView+Badge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 930BC5EC212DAFA600618B59 /* UIView+Badge.swift */; };
 /* End PBXBuildFile section */
@@ -32,7 +31,6 @@
 		930BC5D5212DAEEE00618B59 /* BadgeKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BadgeKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		930BC5DA212DAEEE00618B59 /* BadgeKitTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeKitTests.swift; sourceTree = "<group>"; };
 		930BC5DC212DAEEE00618B59 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		930BC5E6212DAF3B00618B59 /* Badge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Badge.swift; sourceTree = "<group>"; };
 		930BC5E8212DAF4F00618B59 /* BadgeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeManager.swift; sourceTree = "<group>"; };
 		930BC5EC212DAFA600618B59 /* UIView+Badge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Badge.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -78,7 +76,6 @@
 			isa = PBXGroup;
 			children = (
 				930BC5CF212DAEEE00618B59 /* BadgeKit.h */,
-				930BC5E6212DAF3B00618B59 /* Badge.swift */,
 				930BC5E8212DAF4F00618B59 /* BadgeManager.swift */,
 				930BC5EC212DAFA600618B59 /* UIView+Badge.swift */,
 				930BC5D0212DAEEE00618B59 /* Info.plist */,
@@ -157,10 +154,11 @@
 				TargetAttributes = {
 					930BC5CB212DAEEE00618B59 = {
 						CreatedOnToolsVersion = 9.4.1;
-						LastSwiftMigration = 0940;
+						LastSwiftMigration = 1010;
 					};
 					930BC5D4212DAEEE00618B59 = {
 						CreatedOnToolsVersion = 9.4.1;
+						LastSwiftMigration = 1010;
 					};
 				};
 			};
@@ -205,7 +203,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				930BC5ED212DAFA600618B59 /* UIView+Badge.swift in Sources */,
-				930BC5E7212DAF3B00618B59 /* Badge.swift in Sources */,
 				930BC5E9212DAF4F00618B59 /* BadgeManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -281,7 +278,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -338,7 +335,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -370,7 +367,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -395,7 +392,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.saucym.BadgeKit;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -413,7 +410,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.saucym.BadgeKitTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -431,7 +428,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.saucym.BadgeKitTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

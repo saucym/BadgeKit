@@ -26,14 +26,29 @@ public protocol BadgeProtocol: class {
     func hideBadge()
 }
 
+@objc public class Badge: NSObject {
+    public let keyPath: NSString
+    public let count: UInt
+    public init(keyPath: NSString, count: UInt) {
+        self.keyPath = keyPath
+        self.count = count
+        super.init()
+    }
+    public override var description: String {
+        return "keyPath: \(keyPath)  count:\(count)"
+    }
+}
+
 public typealias BadgeNotificationBlock = (Badge, Bool) -> Void
 
-class BadgeManager: NSObject {
+@objc public class BadgeManager: NSObject {
     @objc public static let shared = BadgeManager()
-    var badgeDict = [NSString: Badge]() // keyPath : Badge
-    let blockDict = NSMutableDictionary() // keyPath : [BadgeProtocol or BadgeNotificationBlock]
-    var hideDict: [NSString: NSMutableSet] // keyPath : [keyPath]
-    public var storageURL: URL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0].appendingPathComponent("badgeKit.data") {
+    @objc public static var radius: CGFloat = 4.5
+    @objc public static var maxShowNumber: NSInteger = 99
+    private var badgeDict = [NSString: Badge]() // keyPath : Badge
+    private let blockDict = NSMutableDictionary() // keyPath : [BadgeProtocol or BadgeNotificationBlock]
+    private var hideDict: [NSString: NSMutableSet] // keyPath : [keyPath]
+    @objc public var storageURL: URL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0].appendingPathComponent("badgeKit.data") {
         didSet {
             hideDict = BadgeManager.dictFrom(storageURL: storageURL)
         }
@@ -119,7 +134,7 @@ class BadgeManager: NSObject {
         }
     }
     
-    public func observeFor(keyPath: NSString, badgeView: BadgeProtocol_objc?, block: BadgeNotificationBlock?) {
+    @objc public func observeFor(keyPath: NSString, badgeView: BadgeProtocol_objc?, block: BadgeNotificationBlock?) {
         if UserDefaults.standard.bool(forKey: badgeKeyFor(keyPath: keyPath)) { // 如果记录了就不在处理
             return
         }
