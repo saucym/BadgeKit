@@ -19,35 +19,43 @@ class FirstViewController: UIViewController {
         view.addSubview(btn)
         btn.addTarget(self, action: #selector(buttonActon), for: .touchUpInside)
 
-        BadgeManager.shared.observeFor(keyPath: Badge.firstButton, badgeView: btn, block: nil)
+        BadgeManager.shared.observeFor(keyPath: BadgeFirst.button0, badgeView: btn, block: nil)
 
         let btn1 = UIButton(type: .contactAdd)
         btn1.center = CGPoint(x: view.center.x + 100, y: view.center.y + 100)
         view.addSubview(btn1)
         btn1.addTarget(self, action: #selector(buttonActon1), for: .touchUpInside)
-        BadgeManager.shared.observeFor(keyPath: Badge.firstButton1, badgeView: btn1, block: nil)
+        BadgeManager.shared.observeFor(keyPath: BadgeFirst.button1, badgeView: btn1, block: nil)
     }
 
     @objc func buttonActon() {
-        BadgeManager.shared.setBadgeFor(keyPath: Badge.firstButton, count: UInt(arc4random() % 99))
+        if BadgeManager.shared.countFor(keyPath: BadgeFirst.button0) > 0 {
+            BadgeManager.shared.clearBadgeFor(keyPath: BadgeFirst.button0)
+        } else {
+            BadgeManager.shared.setBadgeFor(keyPath: BadgeFirst.button0, count: UInt(arc4random() % 9))
+        }
     }
     @objc func buttonActon1() {
-        BadgeManager.shared.setBadgeFor(keyPath: Badge.firstButton1, count: UInt(arc4random() % 99))
+        if BadgeManager.shared.countFor(keyPath: BadgeFirst.button1) > 0 {
+            BadgeManager.shared.clearBadgeFor(keyPath: BadgeFirst.button1)
+        } else {
+            BadgeManager.shared.setBadgeFor(keyPath: BadgeFirst.button1, count: UInt(arc4random() % 9))
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        BadgeManager.shared.clearBadgeFor(keyPath: Badge.first)
+        BadgeManager.shared.clearBadgeFor(keyPath: BadgeFirst.root)
     }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        BadgeManager.shared.clearBadgeFor(keyPath: Badge.first)
+        BadgeManager.shared.clearBadgeFor(keyPath: BadgeFirst.root)
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            BadgeManager.shared.setBadgeFor(keyPath: Badge.second)
+            BadgeManager.shared.setBadgeFor(keyPath: BadgeSecond.button1)
         }
     }
 }

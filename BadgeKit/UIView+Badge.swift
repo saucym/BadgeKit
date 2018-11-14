@@ -83,18 +83,22 @@ extension BadgeProtocol {
     }
     
     public func showBadge(_ withValue: UInt) {
-        badgeView?.isHidden = withValue == 0 ? true : false
-        let text: String = withValue > BadgeManager.maxShowNumber ? "\(BadgeManager.maxShowNumber)+" : "\(withValue)"
-        badgeView?.setTitle(text, for: .normal)
-        badgeView?.heightConstraint?.constant = BadgeManager.radius * 2 + 4
-        badgeView?.layer.cornerRadius = BadgeManager.radius + 2
+        if let bView = badgeView {
+            bView.isHidden = withValue == 0 ? true : false
+            let text: String = withValue > BadgeManager.maxShowNumber ? "\(BadgeManager.maxShowNumber)+" : "\(withValue)"
+            bView.setTitle(text, for: .normal)
+            bView.heightConstraint?.constant = BadgeManager.radius * 2 + 4
+            bView.layer.cornerRadius = BadgeManager.radius + 2
+        }
     }
     
     public func showBadge() {
-        badgeView?.setTitle("", for: .normal)
-        badgeView?.isHidden = false
-        badgeView?.heightConstraint?.constant = BadgeManager.radius * 2
-        badgeView?.layer.cornerRadius = BadgeManager.radius
+        if let bView = badgeView {
+            bView.setTitle("", for: .normal)
+            bView.isHidden = false
+            bView.heightConstraint?.constant = BadgeManager.radius * 2
+            bView.layer.cornerRadius = BadgeManager.radius
+        }
     }
     
     public func hideBadge() {
