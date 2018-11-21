@@ -26,6 +26,9 @@ class FirstViewController: UIViewController {
         view.addSubview(btn1)
         btn1.addTarget(self, action: #selector(buttonActon1), for: .touchUpInside)
         BadgeManager.shared.observeFor(keyPath: BadgeFirst.button1, badgeView: btn1, block: nil)
+
+        BadgeManager.shared.setBadgeFor(keyPath: BadgeFirst.button0, count: UInt(arc4random() % 9))
+        BadgeManager.shared.setBadgeFor(keyPath: BadgeFirst.button1, count: UInt(arc4random() % 9))
     }
 
     @objc func buttonActon() {

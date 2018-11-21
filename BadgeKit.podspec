@@ -2,7 +2,7 @@
 
 Pod::Spec.new do |s|
 	s.name = 'BadgeKit'
-	s.version = '1.0.0'
+	s.version = '0.5'
 	s.description = 'BadgeKit'
 	s.license = 'MIT'
 	s.summary = 'BadgeKit'

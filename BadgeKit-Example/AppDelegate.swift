@@ -38,10 +38,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 BadgeManager.shared.observeFor(keyPath: BadgeSecond.root, badgeView: item, block: nil)
             }
         }
-
-        BadgeManager.shared.setBadgeFor(keyPath: BadgeFirst.button0, count: UInt(arc4random() % 9))
-        BadgeManager.shared.setBadgeFor(keyPath: BadgeFirst.button1, count: UInt(arc4random() % 9))
-        BadgeManager.shared.setBadgeFor(keyPath: BadgeFirst.button2, count: UInt(arc4random() % 9))
         return true
     }
 
