@@ -35,7 +35,7 @@ class FirstViewController: UIViewController {
         if BadgeManager.shared.countFor(keyPath: BadgeFirst.button0) > 0 {
             BadgeManager.shared.clearBadgeFor(keyPath: BadgeFirst.button0)
         } else {
-            BadgeManager.shared.setBadgeFor(keyPath: BadgeFirst.button0, count: UInt(arc4random() % 9))
+            BadgeManager.shared.setBadgeFor(keyPath: BadgeFirst.button0, count: UInt(arc4random() % 2))
         }
     }
     @objc func buttonActon1() {

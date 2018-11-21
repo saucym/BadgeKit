@@ -11,13 +11,10 @@ import UIKit
 private struct AssociatedKeys {
     static var view = "badgeView"
     static var offset = "badgeOffset"
+    static var height = "height"
 }
 
 extension UIView {
-    var heightConstraint: NSLayoutConstraint? {
-        return self.constraints.lazy.filter{ $0.firstAttribute == .height }.first
-    }
-    
     func findSubview(_ name: String) -> UIView? {
         if let nameClass = NSClassFromString(name) {
             if type(of: self) == nameClass {
@@ -31,6 +28,10 @@ extension UIView {
 }
 
 extension BadgeProtocol {
+    private var heightConstraint: NSLayoutConstraint? {
+        set { objc_setAssociatedObject(self, &AssociatedKeys.height, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+        get { return objc_getAssociatedObject(self, &AssociatedKeys.height) as? NSLayoutConstraint }
+    }
     public var badgeView: UIButton? {
         get {
             if let bView = objc_getAssociatedObject(self, &AssociatedKeys.view) as? UIButton {
@@ -52,7 +53,9 @@ extension BadgeProtocol {
                 objc_setAssociatedObject(self, &AssociatedKeys.view, bView, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
                 
                 bView.translatesAutoresizingMaskIntoConstraints = false
-                bView.heightAnchor.constraint(equalToConstant: BadgeManager.radius * 2).isActive = true
+                let height = bView.heightAnchor.constraint(equalToConstant: BadgeManager.radius * 2)
+                height.isActive = true
+                self.heightConstraint = height
                 let topConstraint = bView.topAnchor.constraint(equalTo: view.topAnchor, constant: self.badgeOffset.y - BadgeManager.radius)
                 topConstraint.priority = .defaultLow
                 topConstraint.isActive = true
@@ -87,16 +90,20 @@ extension BadgeProtocol {
             bView.isHidden = withValue == 0 ? true : false
             let text: String = withValue > BadgeManager.maxShowNumber ? "\(BadgeManager.maxShowNumber)+" : "\(withValue)"
             bView.setTitle(text, for: .normal)
-            bView.heightConstraint?.constant = BadgeManager.radius * 2 + 4
+            if let hConstraint = self.heightConstraint {
+                hConstraint.constant = BadgeManager.radius * 2 + 4
+            }
             bView.layer.cornerRadius = BadgeManager.radius + 2
         }
     }
     
     public func showBadge() {
         if let bView = badgeView {
-            bView.setTitle("", for: .normal)
+            bView.setTitle(nil, for: .normal)
             bView.isHidden = false
-            bView.heightConstraint?.constant = BadgeManager.radius * 2
+            if let hConstraint = self.heightConstraint {
+                hConstraint.constant = BadgeManager.radius * 2
+            }
             bView.layer.cornerRadius = BadgeManager.radius
         }
     }
