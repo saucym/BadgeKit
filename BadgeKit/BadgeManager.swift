@@ -39,6 +39,19 @@ public protocol BadgeProtocol: class {
     }
 }
 
+extension String {
+    fileprivate func hasSuper(keyPath: String) -> Bool { // like "a.b.c".hasSuper(keyPath: "a.b") == true
+        if self.hasPrefix(keyPath) == true {
+            if count > keyPath.count {
+                return String(self.suffix(count - keyPath.count)).hasPrefix(".")
+            }
+            return true
+        } else {
+            return false
+        }
+    }
+}
+
 public typealias BadgeChangedNotificationBlock = (BadgeModel, Bool) -> Void
 
 @objc public class BadgeManager: NSObject {
@@ -182,7 +195,7 @@ public typealias BadgeChangedNotificationBlock = (BadgeModel, Bool) -> Void
                 }
             }
             
-            if key.hasPrefix(keyPath as String) {
+            if key.hasSuper(keyPath: keyPath) {
                 return true
             }
         }
@@ -212,7 +225,7 @@ public typealias BadgeChangedNotificationBlock = (BadgeModel, Bool) -> Void
                 }
             }
             
-            if key.hasPrefix(keyPath as String) {
+            if key.hasSuper(keyPath: keyPath) {
                 if let cBadge = badgeDict[key] {
                     count += cBadge.count
                 }
@@ -223,7 +236,7 @@ public typealias BadgeChangedNotificationBlock = (BadgeModel, Bool) -> Void
     
     // MARK: - Private
     
-    func clearFor(keyPath: String) {
+    private func clearFor(keyPath: String) {
         if let cBadge = badgeDict[keyPath] {
             badgeDict.removeValue(forKey: keyPath)
             recursiveNotificationFor(badge: cBadge, isAdd: false)
@@ -232,7 +245,7 @@ public typealias BadgeChangedNotificationBlock = (BadgeModel, Bool) -> Void
         hideTableRemove(keyPath: keyPath)
     }
     
-    func clearFor(prefix: String) {
+    private func clearFor(prefix: String) {
         let keys = badgeDict.keys
         for keyPath in keys {
             if keyPath.hasPrefix(prefix as String) {
@@ -246,7 +259,7 @@ public typealias BadgeChangedNotificationBlock = (BadgeModel, Bool) -> Void
         hideTableRemoveWith(prefix: prefix)
     }
     
-    func hideTableRemove(keyPath: String) {
+    private func hideTableRemove(keyPath: String) {
         var isChanged = false
         hideDict.forEach { _, keySet in
             if keySet.contains(keyPath) {
@@ -261,7 +274,7 @@ public typealias BadgeChangedNotificationBlock = (BadgeModel, Bool) -> Void
         }
     }
     
-    func hideTableRemoveWith(prefix: String) {
+    private func hideTableRemoveWith(prefix: String) {
         var isChanged = false
         hideDict.forEach { key, keySet in
             if let enumSet: NSSet = keySet.copy() as? NSSet {
@@ -281,18 +294,18 @@ public typealias BadgeChangedNotificationBlock = (BadgeModel, Bool) -> Void
         }
     }
     
-    func saveHideTable() {
+    private func saveHideTable() {
         let table = hideDict
         DispatchQueue.global().async {
             NSKeyedArchiver.archiveRootObject(table, toFile: self.storageURL.path)
         }
     }
     
-    func badgeKeyFor(keyPath: String) -> String {
+    private func badgeKeyFor(keyPath: String) -> String {
         return "wy_badge_" + (keyPath as String) + "\(storageURL.path.hashValue)"
     }
     
-    func add(badge: BadgeModel) {
+    private func add(badge: BadgeModel) {
         if UserDefaults.standard.bool(forKey: badgeKeyFor(keyPath: badge.keyPath)) { // 如果记录了就不在处理
             return
         }
@@ -308,7 +321,7 @@ public typealias BadgeChangedNotificationBlock = (BadgeModel, Bool) -> Void
         }
     }
     
-    func recursiveNotificationFor(badge: BadgeModel, isAdd: Bool) {
+    private func recursiveNotificationFor(badge: BadgeModel, isAdd: Bool) {
         if let array = blockDict[badge.keyPath], array.count > 0 {
             for obj in array {
                 if let block = obj as? BadgeChangedNotificationBlock {
@@ -341,7 +354,7 @@ public typealias BadgeChangedNotificationBlock = (BadgeModel, Bool) -> Void
         }
     }
     
-    func refreshFor(keyPath: String) {
+    private func refreshFor(keyPath: String) {
         if let array = blockDict[keyPath], array.count > 0 {
             for obj in array {
                 if let bView = obj as? BadgeProtocol {

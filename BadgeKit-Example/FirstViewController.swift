@@ -13,27 +13,30 @@ class FirstViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        var rect = view.bounds.insetBy(dx: 15, dy: 150)
+        var rect = view.bounds.insetBy(dx: 30, dy: 150)
         rect.origin.y += 150
-        let stackView = UIStackView(frame: rect)
-        stackView.alignment    = .center
-        stackView.distribution = .equalSpacing
-        stackView.axis         = .horizontal;
-        stackView.spacing      = 40;
-        view.addSubview(stackView)
-        
-        (0..<6).forEach { (index) in
-            let btn = UIButton(type: .contactAdd)
-            btn.center = CGPoint(x: view.center.x, y: view.center.y + 100)
-            btn.tag = index
-            btn.addTarget(self, action: #selector(buttonActon(_:)), for: .touchUpInside)
-            stackView.addArrangedSubview(btn)
+        rect.size.height = 80
+        (0..<2).forEach { (section) in
+            let stackView = UIStackView(frame: rect)
+            stackView.alignment    = .center
+            stackView.distribution = .equalSpacing
+            stackView.axis         = .horizontal;
+            stackView.spacing      = 40;
+            view.addSubview(stackView)
             
-            BadgeManager.shared.observeFor(keyPath: First.button(index), badgeView: btn, changedBlock: { (modle, isAdd) in
-                print("\(modle), isAdd: \(isAdd)")
-            })
-            BadgeManager.shared.setBadgeFor(keyPath: First.button(index), count: UInt(arc4random() % 9))
+            (0..<4).forEach { (index) in
+                let tag = section * 1000 + index
+                let btn = UIButton(type: .contactAdd)
+                btn.tag = tag
+                btn.addTarget(self, action: #selector(buttonActon(_:)), for: .touchUpInside)
+                stackView.addArrangedSubview(btn)
+                
+                BadgeManager.shared.observeFor(keyPath: First.button(tag), badgeView: btn, changedBlock: { (modle, isAdd) in
+                    print("\(modle), isAdd: \(isAdd)")
+                })
+                BadgeManager.shared.setBadgeFor(keyPath: First.button(tag), count: UInt(arc4random() % 99))
+            }
+            rect.origin.y += rect.size.height
         }
     }
 
@@ -41,7 +44,7 @@ class FirstViewController: UIViewController {
         if BadgeManager.shared.recursiveStatusFor(keyPath: First.button(sender.tag)) == true {
             BadgeManager.shared.clearBadgeFor(keyPath: First.button(sender.tag))
         } else {
-            BadgeManager.shared.setBadgeFor(keyPath: First.button(sender.tag), count: UInt(arc4random() % 99))
+            BadgeManager.shared.setBadgeFor(keyPath: First.button(sender.tag), count: UInt(arc4random() % 1999))
         }
     }
 
