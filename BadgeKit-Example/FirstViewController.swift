@@ -30,7 +30,7 @@ class FirstViewController: UIViewController {
             btn.addTarget(self, action: #selector(buttonActon(_:)), for: .touchUpInside)
             stackView.addArrangedSubview(btn)
             
-            BadgeManager.shared.observeFor(keyPath: First.button(index), badgeView: btn, block:  { (modle, isAdd) in
+            BadgeManager.shared.observeFor(keyPath: First.button(index), badgeView: btn, changedBlock: { (modle, isAdd) in
                 print("\(modle), isAdd: \(isAdd)")
             })
             BadgeManager.shared.setBadgeFor(keyPath: First.button(index), count: UInt(arc4random() % 9))

@@ -39,7 +39,7 @@ public protocol BadgeProtocol: class {
     }
 }
 
-public typealias BadgeNotificationBlock = (BadgeModel, Bool) -> Void
+public typealias BadgeChangedNotificationBlock = (BadgeModel, Bool) -> Void
 
 @objc public class BadgeManager: NSObject {
     @objc public static let shared = BadgeManager()
@@ -134,7 +134,7 @@ public typealias BadgeNotificationBlock = (BadgeModel, Bool) -> Void
         }
     }
     
-    @objc public func observeFor(keyPath: String, badgeView: BadgeProtocol_objc?, block: BadgeNotificationBlock?) {
+    @objc public func observeFor(keyPath: String, badgeView: BadgeProtocol_objc?, changedBlock: BadgeChangedNotificationBlock?) {
         if UserDefaults.standard.bool(forKey: badgeKeyFor(keyPath: keyPath)) { // 如果记录了就不在处理
             return
         }
@@ -143,7 +143,7 @@ public typealias BadgeNotificationBlock = (BadgeModel, Bool) -> Void
             if let badgeView = badgeView {
                 array.append(badgeView)
             }
-            if let block = block {
+            if let block = changedBlock {
                 array.append(block)
             }
         } else {
@@ -151,7 +151,7 @@ public typealias BadgeNotificationBlock = (BadgeModel, Bool) -> Void
             if let badgeView = badgeView {
                 array.append(badgeView)
             }
-            if let block = block {
+            if let block = changedBlock {
                 array.append(block)
             }
             blockDict[keyPath] = array
@@ -311,7 +311,7 @@ public typealias BadgeNotificationBlock = (BadgeModel, Bool) -> Void
     func recursiveNotificationFor(badge: BadgeModel, isAdd: Bool) {
         if let array = blockDict[badge.keyPath], array.count > 0 {
             for obj in array {
-                if let block = obj as? BadgeNotificationBlock {
+                if let block = obj as? BadgeChangedNotificationBlock {
                     block(badge, isAdd)
                 } else if let bView = obj as? BadgeProtocol {
                     if isAdd {
@@ -359,7 +359,7 @@ public typealias BadgeNotificationBlock = (BadgeModel, Bool) -> Void
                     } else {
                         bView.hideBadge()
                     }
-                } else if let block = obj as? BadgeNotificationBlock {
+                } else if let block = obj as? BadgeChangedNotificationBlock {
                     block(BadgeModel(keyPath: keyPath, count: 0), false)
                 }
             }

@@ -35,10 +35,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         if let tab = self.window?.rootViewController as? UITabBarController {
             if let item = tab.tabBar.items?.first {
-                BadgeManager.shared.observeFor(keyPath: First.root, badgeView: item, block: nil)
+                BadgeManager.shared.observeFor(keyPath: First.root, badgeView: item, changedBlock: { (modle, isAdd) in
+                    print("\(modle), isAdd: \(isAdd)")
+                })
             }
             if let item = tab.tabBar.items?.last {
-                BadgeManager.shared.observeFor(keyPath: Second.root, badgeView: item, block: nil)
+                BadgeManager.shared.observeFor(keyPath: Second.root, badgeView: item, changedBlock:  { (modle, isAdd) in
+                    print("\(modle), isAdd: \(isAdd)")
+                })
             }
         }
         return true
