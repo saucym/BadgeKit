@@ -44,7 +44,7 @@ public typealias BadgeNotificationBlock = (BadgeModel, Bool) -> Void
 @objc public class BadgeManager: NSObject {
     @objc public static let shared = BadgeManager()
     @objc public static var radius: CGFloat = 4.5
-    @objc public static var maxShowNumber: NSInteger = 99
+    @objc public static var maxShowNumber: NSInteger = 999
     private var badgeDict = [NSString: BadgeModel]() // keyPath : Badge
     private let blockDict = NSMutableDictionary() // keyPath : [BadgeProtocol or BadgeNotificationBlock]
     private var hideDict: [NSString: NSMutableSet] // keyPath : [keyPath]

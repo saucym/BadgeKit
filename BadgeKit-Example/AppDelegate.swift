@@ -9,17 +9,20 @@
 import UIKit
 import BadgeKit
 
-public class BadgeFirst: NSObject { /** < 我页面的一些红点 */
+public class First: NSObject { /** < 我页面的一些红点 */
     @objc public static let root: NSString  = "first"
-    @objc public static let button0: NSString  = "first.button0"
-    @objc public static let button1: NSString  = "first.button1"
-    @objc public static let button2: NSString  = "first.button2"
+    @objc public static let button: NSString  = "first.button"
+    class func button<T>(_ tag: T) -> NSString {
+        return "first.button.\(tag)" as NSString
+    }
 }
 
-public class BadgeSecond: NSObject { /** < 我页面的一些红点 */
+public class Second: NSObject { /** < 我页面的一些红点 */
     @objc public static let root: NSString  = "second"
-    @objc public static let button0: NSString  = "second.button0"
-    @objc public static let button1: NSString  = "second.button1"
+    @objc public static let button: NSString  = "second.button"
+    class func button<T>(_ tag: T) -> NSString {
+        return "first.button.\(tag)" as NSString
+    }
 }
 
 @UIApplicationMain
@@ -32,10 +35,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         if let tab = self.window?.rootViewController as? UITabBarController {
             if let item = tab.tabBar.items?.first {
-                BadgeManager.shared.observeFor(keyPath: BadgeFirst.root, badgeView: item, block: nil)
+                BadgeManager.shared.observeFor(keyPath: First.root, badgeView: item, block: nil)
             }
             if let item = tab.tabBar.items?.last {
-                BadgeManager.shared.observeFor(keyPath: BadgeSecond.root, badgeView: item, block: nil)
+                BadgeManager.shared.observeFor(keyPath: Second.root, badgeView: item, block: nil)
             }
         }
         return true

@@ -18,17 +18,17 @@ class SecondViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        BadgeManager.shared.clearBadgeFor(keyPath: BadgeSecond.root)
+        BadgeManager.shared.clearBadgeFor(keyPath: Second.root)
     }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        BadgeManager.shared.clearBadgeFor(keyPath: BadgeSecond.root)
+        BadgeManager.shared.clearBadgeFor(keyPath: Second.root)
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            BadgeManager.shared.setBadgeFor(keyPath: BadgeFirst.button0)
+            BadgeManager.shared.setBadgeFor(keyPath: First.button(0))
         }
     }
 }
