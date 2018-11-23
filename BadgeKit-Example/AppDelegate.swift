@@ -10,18 +10,18 @@ import UIKit
 import BadgeKit
 
 public class First: NSObject { /** < 我页面的一些红点 */
-    @objc public static let root: NSString  = "first"
-    @objc public static let button: NSString  = "first.button"
-    class func button<T>(_ tag: T) -> NSString {
-        return "first.button.\(tag)" as NSString
+    @objc public static let root    = "first"
+    @objc public static let button  = "\(root).button"
+    class func button<T>(_ tag: T) -> String {
+        return "\(root).button.\(tag)"
     }
 }
 
 public class Second: NSObject { /** < 我页面的一些红点 */
-    @objc public static let root: NSString  = "second"
-    @objc public static let button: NSString  = "second.button"
-    class func button<T>(_ tag: T) -> NSString {
-        return "first.button.\(tag)" as NSString
+    @objc public static let root  = "second"
+    @objc public static let button  = "\(root).button"
+    class func button<T>(_ tag: T) -> String {
+        return "\(root).button.\(tag)"
     }
 }
 

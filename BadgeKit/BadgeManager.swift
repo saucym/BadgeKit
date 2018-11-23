@@ -27,9 +27,9 @@ public protocol BadgeProtocol: class {
 }
 
 @objc public class BadgeModel: NSObject {
-    public let keyPath: NSString
+    public let keyPath: String
     public let count: UInt
-    public init(keyPath: NSString, count: UInt) {
+    public init(keyPath: String, count: UInt) {
         self.keyPath = keyPath
         self.count = count
         super.init()
@@ -45,9 +45,9 @@ public typealias BadgeNotificationBlock = (BadgeModel, Bool) -> Void
     @objc public static let shared = BadgeManager()
     @objc public static var radius: CGFloat = 4.5
     @objc public static var maxShowNumber: NSInteger = 999
-    private var badgeDict = [NSString: BadgeModel]() // keyPath : Badge
-    private let blockDict = NSMutableDictionary() // keyPath : [BadgeProtocol or BadgeNotificationBlock]
-    private var hideDict: [NSString: NSMutableSet] // keyPath : [keyPath]
+    private var badgeDict = [String: BadgeModel]()  // keyPath : Badge
+    private var blockDict = [String: [Any]]()         // keyPath : [BadgeProtocol or BadgeNotificationBlock]
+    private var hideDict: [String: NSMutableSet]    // keyPath : [keyPath]
     @objc public var storageURL: URL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0].appendingPathComponent("badgeKit.data") {
         didSet {
             hideDict = BadgeManager.dictFrom(storageURL: storageURL)
@@ -59,8 +59,8 @@ public typealias BadgeNotificationBlock = (BadgeModel, Bool) -> Void
         super.init()
     }
 
-    private static func dictFrom(storageURL: URL) -> [NSString: NSMutableSet] {
-        if let dict = NSKeyedUnarchiver.unarchiveObject(withFile: storageURL.path) as? [NSString: NSMutableSet] {
+    private static func dictFrom(storageURL: URL) -> [String: NSMutableSet] {
+        if let dict = NSKeyedUnarchiver.unarchiveObject(withFile: storageURL.path) as? [String: NSMutableSet] {
             return dict.filter { $1.count != 0 } //remove empty set
         } else {
             do {
@@ -68,44 +68,44 @@ public typealias BadgeNotificationBlock = (BadgeModel, Bool) -> Void
             } catch {
                 print(error)
             }
-            return [NSString: NSMutableSet]()
+            return [String: NSMutableSet]()
         }
     }
     
     // MARK: - Public
     
-    @objc public func setBadgeFor(keyPath: NSString) {
+    @objc public func setBadgeFor(keyPath: String) {
         DispatchQueue.main.async {
             self.add(badge: BadgeModel(keyPath: keyPath, count: 0))
         }
     }
     
-    @objc public func setBadgeFor(keyPath: NSString, count: UInt) {
+    @objc public func setBadgeFor(keyPath: String, count: UInt) {
         DispatchQueue.main.async {
             self.add(badge: BadgeModel(keyPath: keyPath, count: count))
         }
     }
     
-    @objc public func clearBadgeFor(keyPath: NSString) {
+    @objc public func clearBadgeFor(keyPath: String) {
         DispatchQueue.main.async {
             self.clearFor(keyPath: keyPath)
         }
     }
     
-    @objc public func clearBadgeAndSaveFor(keyPath: NSString) { // 清除 并且会记录落地，保证以后相同的key不会再出红点
+    @objc public func clearBadgeAndSaveFor(keyPath: String) { // 清除 并且会记录落地，保证以后相同的key不会再出红点
         DispatchQueue.main.async {
             self.clearFor(keyPath: keyPath)
             UserDefaults.standard.set(true, forKey: self.badgeKeyFor(keyPath: keyPath))
         }
     }
     
-    @objc public func clearBadgeFor(prefix: NSString) {
+    @objc public func clearBadgeFor(prefix: String) {
         DispatchQueue.main.async {
             self.clearFor(prefix: prefix)
         }
     }
     
-    @objc public func hideFor(keyPath: NSString) { // 设置为不显示，记录到磁盘
+    @objc public func hideFor(keyPath: String) { // 设置为不显示，记录到磁盘
         DispatchQueue.main.async {
             let subKeys = NSMutableSet()
             self.badgeDict.forEach({ key, _ in
@@ -134,24 +134,27 @@ public typealias BadgeNotificationBlock = (BadgeModel, Bool) -> Void
         }
     }
     
-    @objc public func observeFor(keyPath: NSString, badgeView: BadgeProtocol_objc?, block: BadgeNotificationBlock?) {
+    @objc public func observeFor(keyPath: String, badgeView: BadgeProtocol_objc?, block: BadgeNotificationBlock?) {
         if UserDefaults.standard.bool(forKey: badgeKeyFor(keyPath: keyPath)) { // 如果记录了就不在处理
             return
         }
         
-        if let array = blockDict.object(forKey: keyPath) as? NSMutableArray {
-            if badgeView != nil {
-                array.add(badgeView as Any)
+        if var array = blockDict[keyPath], array.count > 0 {
+            if let badgeView = badgeView {
+                array.append(badgeView)
             }
-            if block != nil {
-                array.add(block as Any)
+            if let block = block {
+                array.append(block)
             }
         } else {
-            let array = NSMutableArray(object: block as Any)
-            if badgeView != nil {
-                array.add(badgeView as Any)
+            var array = [Any]()
+            if let badgeView = badgeView {
+                array.append(badgeView)
             }
-            blockDict.setObject(array, forKey: keyPath)
+            if let block = block {
+                array.append(block)
+            }
+            blockDict[keyPath] = array
         }
         
         if badgeView != nil {
@@ -170,7 +173,7 @@ public typealias BadgeNotificationBlock = (BadgeModel, Bool) -> Void
         }
     }
     
-    @objc public func recursiveStatusFor(keyPath: NSString) -> Bool {
+    @objc public func recursiveStatusFor(keyPath: String) -> Bool {
         let keys = badgeDict.keys
         for key in keys {
             if let subKeys = hideDict[keyPath] {
@@ -186,7 +189,7 @@ public typealias BadgeNotificationBlock = (BadgeModel, Bool) -> Void
         return false
     }
     
-    @objc public func countFor(keyPath: NSString) -> UInt {
+    @objc public func countFor(keyPath: String) -> UInt {
         if let subKeys = hideDict[keyPath] {
             if subKeys.contains(keyPath) {
                 return 0
@@ -199,7 +202,7 @@ public typealias BadgeNotificationBlock = (BadgeModel, Bool) -> Void
         return 0
     }
     
-    @objc public func recursiveCountFor(keyPath: NSString) -> UInt {
+    @objc public func recursiveCountFor(keyPath: String) -> UInt {
         var count: UInt = 0
         let keys = badgeDict.keys
         for key in keys {
@@ -220,7 +223,7 @@ public typealias BadgeNotificationBlock = (BadgeModel, Bool) -> Void
     
     // MARK: - Private
     
-    func clearFor(keyPath: NSString) {
+    func clearFor(keyPath: String) {
         if let cBadge = badgeDict[keyPath] {
             badgeDict.removeValue(forKey: keyPath)
             recursiveNotificationFor(badge: cBadge, isAdd: false)
@@ -229,7 +232,7 @@ public typealias BadgeNotificationBlock = (BadgeModel, Bool) -> Void
         hideTableRemove(keyPath: keyPath)
     }
     
-    func clearFor(prefix: NSString) {
+    func clearFor(prefix: String) {
         let keys = badgeDict.keys
         for keyPath in keys {
             if keyPath.hasPrefix(prefix as String) {
@@ -243,7 +246,7 @@ public typealias BadgeNotificationBlock = (BadgeModel, Bool) -> Void
         hideTableRemoveWith(prefix: prefix)
     }
     
-    func hideTableRemove(keyPath: NSString) {
+    func hideTableRemove(keyPath: String) {
         var isChanged = false
         hideDict.forEach { _, keySet in
             if keySet.contains(keyPath) {
@@ -258,12 +261,12 @@ public typealias BadgeNotificationBlock = (BadgeModel, Bool) -> Void
         }
     }
     
-    func hideTableRemoveWith(prefix: NSString) {
+    func hideTableRemoveWith(prefix: String) {
         var isChanged = false
         hideDict.forEach { key, keySet in
             if let enumSet: NSSet = keySet.copy() as? NSSet {
                 enumSet.forEach { value in
-                    if let key = value as? NSString {
+                    if let key = value as? String {
                         if key.hasPrefix(prefix as String) {
                             keySet.remove(key)
                             isChanged = true
@@ -285,7 +288,7 @@ public typealias BadgeNotificationBlock = (BadgeModel, Bool) -> Void
         }
     }
     
-    func badgeKeyFor(keyPath: NSString) -> String {
+    func badgeKeyFor(keyPath: String) -> String {
         return "wy_badge_" + (keyPath as String) + "\(storageURL.path.hashValue)"
     }
     
@@ -306,7 +309,7 @@ public typealias BadgeNotificationBlock = (BadgeModel, Bool) -> Void
     }
     
     func recursiveNotificationFor(badge: BadgeModel, isAdd: Bool) {
-        if let array = blockDict.object(forKey: badge.keyPath) as? [Any] {
+        if let array = blockDict[badge.keyPath], array.count > 0 {
             for obj in array {
                 if let block = obj as? BadgeNotificationBlock {
                     block(badge, isAdd)
@@ -331,15 +334,15 @@ public typealias BadgeNotificationBlock = (BadgeModel, Bool) -> Void
         }
         
         // 通知到所有父节点
-        var path: NSString = badge.keyPath
+        var path: String = badge.keyPath
         while path.contains(".") {
-            path = path.deletingPathExtension as NSString
+            path = (path as NSString).deletingPathExtension
             refreshFor(keyPath: path)
         }
     }
     
-    func refreshFor(keyPath: NSString) {
-        if let array = blockDict.object(forKey: keyPath) as? [Any] {
+    func refreshFor(keyPath: String) {
+        if let array = blockDict[keyPath], array.count > 0 {
             for obj in array {
                 if let bView = obj as? BadgeProtocol {
                     if let subKeys = hideDict[keyPath] {

@@ -30,16 +30,18 @@ class FirstViewController: UIViewController {
             btn.addTarget(self, action: #selector(buttonActon(_:)), for: .touchUpInside)
             stackView.addArrangedSubview(btn)
             
-            BadgeManager.shared.observeFor(keyPath: First.button(index), badgeView: btn, block: nil)
+            BadgeManager.shared.observeFor(keyPath: First.button(index), badgeView: btn, block:  { (modle, isAdd) in
+                print("\(modle), isAdd: \(isAdd)")
+            })
             BadgeManager.shared.setBadgeFor(keyPath: First.button(index), count: UInt(arc4random() % 9))
         }
     }
 
     @objc func buttonActon(_ sender: UIButton) {
-        if BadgeManager.shared.countFor(keyPath: First.button(sender.tag)) > 0 {
+        if BadgeManager.shared.recursiveStatusFor(keyPath: First.button(sender.tag)) == true {
             BadgeManager.shared.clearBadgeFor(keyPath: First.button(sender.tag))
         } else {
-            BadgeManager.shared.setBadgeFor(keyPath: First.button(sender.tag), count: UInt(arc4random() % 9))
+            BadgeManager.shared.setBadgeFor(keyPath: First.button(sender.tag), count: UInt(arc4random() % 99))
         }
     }
 
