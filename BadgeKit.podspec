@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
 	s.source = { :git => 'http://git.code.oa.com/saucymqin/BadgeKit.git', :branch => 'master' }
 	s.requires_arc = true
 	s.ios.deployment_target = '9.0'
-        s.swift_version = '4.2'
+    s.swift_version = '5.0'
 	s.source_files = 'BadgeKit/**/*.{h,m,swift}'
 	s.resources = 'Resource/**/*.{xib,json,png,jpg,gif,js}','BadgeKit/**/*.{xib,json,png,jpg,gif,js}'
 end
